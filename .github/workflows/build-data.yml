@@ -22,8 +22,17 @@ jobs:
       - name: Copy OpenCV.js (Apache-2.0) so the inscription reader is served from this site
         run: |
           mkdir -p docs/vendor
-          curl -fsSL https://docs.opencv.org/4.10.0/opencv.js -o docs/vendor/opencv.js
-          curl -fsSL https://raw.githubusercontent.com/opencv/opencv/4.10.0/LICENSE -o docs/vendor/OPENCV_LICENSE.txt
+          if npm pack @techstark/opencv-js --silent >/dev/null 2>&1; then
+            tar -xzf techstark-opencv-js-*.tgz
+            cp package/dist/opencv.js docs/vendor/opencv.js
+            cp package/LICENSE docs/vendor/OPENCV_LICENSE.txt 2>/dev/null || curl -fsSL https://raw.githubusercontent.com/opencv/opencv/4.x/LICENSE -o docs/vendor/OPENCV_LICENSE.txt
+            rm -rf package techstark-opencv-js-*.tgz
+          else
+            curl -fsSL https://docs.opencv.org/4.10.0/opencv.js -o docs/vendor/opencv.js
+            curl -fsSL https://raw.githubusercontent.com/opencv/opencv/4.x/LICENSE -o docs/vendor/OPENCV_LICENSE.txt
+          fi
+          test -s docs/vendor/opencv.js
+          ls -l docs/vendor
       - name: Commit data
         run: |
           git config user.name "github-actions[bot]"
