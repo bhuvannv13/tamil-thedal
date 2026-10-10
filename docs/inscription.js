@@ -2,7 +2,8 @@
    Everything runs locally in the browser. */
 (function () {
   "use strict";
-  const OPENCV_URL = "https://docs.opencv.org/4.10.0/opencv.js";
+  // Served from this site first (copied in by the build workflow), with the official build as a fallback.
+  const OPENCV_URLS = ["vendor/opencv.js", "https://docs.opencv.org/4.10.0/opencv.js"];
   const TESSERACT_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
   const cp = n => String.fromCodePoint(n);
   const SCRIPTS = [
@@ -29,8 +30,16 @@
     });
   }
 
+  async function loadFirst(urls) {
+    let lastError;
+    for (const url of urls) {
+      try { await loadScript(url); return; } catch (error) { lastError = error; }
+    }
+    throw lastError;
+  }
+
   function loadOpenCV() {
-    if (!cvReady) cvReady = loadScript(OPENCV_URL).then(() => new Promise(resolve => {
+    if (!cvReady) cvReady = loadFirst(OPENCV_URLS).then(() => new Promise(resolve => {
       const done = () => resolve(window.cv);
       if (window.cv instanceof Promise) window.cv.then(m => { window.cv = m; resolve(m); });
       else if (window.cv && window.cv.Mat) done();
