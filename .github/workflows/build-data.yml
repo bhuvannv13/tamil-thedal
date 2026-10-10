@@ -19,11 +19,16 @@ jobs:
         with:
           python-version: "3.11"
       - run: python tools/build_data.py
+      - name: Copy OpenCV.js (Apache-2.0) so the inscription reader is served from this site
+        run: |
+          mkdir -p docs/vendor
+          curl -fsSL https://docs.opencv.org/4.10.0/opencv.js -o docs/vendor/opencv.js
+          curl -fsSL https://raw.githubusercontent.com/opencv/opencv/4.10.0/LICENSE -o docs/vendor/OPENCV_LICENSE.txt
       - name: Commit data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/data/texts.json
+          git add docs/data/texts.json docs/vendor
           git commit -m "Build verse data" || echo "No changes"
           git pull --rebase
           git push
