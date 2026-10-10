@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tamil Thedal</title>
+<meta name="description" content="Search Thirukkural, Aathichudi and Puthiya Aathichudi by theme, author and category; learn Tamil grammar and history; and examine inscription photos in the browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;600;700&family=Noto+Sans+Brahmi&family=Noto+Sans+Grantha&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="chat.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#search"><span class="brand-ta">தமிழ் தேடல்</span> <span class="brand-en">Tamil Thedal</span></a>
+    <p class="lede">Search 1,549 verses from Thirukkural, Avvaiyar's Aathichudi and Bharathiyar's Puthiya Aathichudi by word, theme, author or category, and learn the grammar and history behind them.</p>
+    <nav class="tabs" aria-label="Sections">
+      <a href="#search" data-tab="search">தேடல் <small>Search</small></a>
+      <a href="#kural" data-tab="kural">திருக்குறள் <small>Browse</small></a>
+      <a href="#grammar" data-tab="grammar">இலக்கணம் <small>Grammar</small></a>
+      <a href="#history" data-tab="history">வரலாறு <small>History</small></a>
+      <a href="#inscription" data-tab="inscription">கல்வெட்டு <small>Inscriptions</small></a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="tab-search" class="tab" aria-labelledby="h-search">
+    <h1 id="h-search" class="sr">Search</h1>
+    <form class="searchbar" id="search-form" role="search">
+      <label class="sr" for="q">Search verses</label>
+      <input id="q" type="search" placeholder="Try நட்பு, friendship, kalvi, rain, அறம்…" autocomplete="off">
+      <button type="submit">Search</button>
+      <button type="button" id="random">Random verse</button>
+    </form>
+    <div class="filters">
+      <label>Work <select id="f-work"><option value="">All works</option></select></label>
+      <label>Author <select id="f-author"><option value="">All authors</option></select></label>
+      <label>Category (பால்) <select id="f-category"><option value="">All</option></select></label>
+      <label>Theme <select id="f-theme"><option value="">All themes</option></select></label>
+    </div>
+    <div class="theme-chips" id="theme-chips"></div>
+    <p class="muted" id="result-count" aria-live="polite"></p>
+    <div id="results" class="results"></div>
+    <button type="button" id="more" class="more" hidden>Show more</button>
+  </section>
+
+  <section id="tab-kural" class="tab" hidden aria-labelledby="h-kural">
+    <h1 id="h-kural">திருக்குறள் <small>Browse by chapter</small></h1>
+    <div class="filters">
+      <label>பால் (Book) <select id="k-paal"></select></label>
+      <label>இயல் (Part) <select id="k-iyal"></select></label>
+      <label>அதிகாரம் (Chapter) <select id="k-chapter"></select></label>
+    </div>
+    <div id="kural-list" class="results"></div>
+  </section>
+
+  <section id="tab-grammar" class="tab" hidden aria-labelledby="h-grammar">
+    <h1 id="h-grammar">இலக்கணம் <small>Grammar lessons</small></h1>
+    <div id="lessons" class="cards"></div>
+  </section>
+
+  <section id="tab-history" class="tab" hidden aria-labelledby="h-history">
+    <h1 id="h-history">வரலாறு <small>A short timeline of Tamil</small></h1>
+    <p class="muted">Dates are approximate and several are debated by historians.</p>
+    <ol id="timeline" class="timeline"></ol>
+  </section>
+
+  <section id="tab-inscription" class="tab" hidden aria-labelledby="h-insc">
+    <h1 id="h-insc">கல்வெட்டு <small>Inscription reader (experimental)</small></h1>
+    <p class="note"><strong>What this can and cannot do.</strong> Everything runs in your browser; your photo is never uploaded. OpenCV cleans up the photo and finds letter-like shapes, then compares them with reference letters from three scripts to suggest which script, and so roughly which era, the inscription resembles. It cannot read ancient scripts word by word or date a stone exactly; for that, consult an epigraphist (for example the Archaeological Survey of India or the Tamil Nadu State Department of Archaeology). For modern Tamil lettering, "Read modern Tamil text" runs open-source OCR.</p>
+    <div class="insc-controls">
+      <label class="upload">Choose a photo <input type="file" id="insc-file" accept="image/*"></label>
+      <button type="button" id="insc-sample">Try a sample</button>
+      <label>Contrast <input type="range" id="insc-clahe" min="1" max="6" step="0.5" value="3"></label>
+      <label>Letter size filter <input type="range" id="insc-minarea" min="20" max="600" step="10" value="80"></label>
+      <label><input type="checkbox" id="insc-invert"> Letters are lighter than the stone</label>
+      <button type="button" id="insc-ocr" disabled>Read modern Tamil text</button>
+    </div>
+    <p class="muted" id="insc-status">Loading OpenCV…</p>
+    <div class="insc-grid">
+      <figure><canvas id="insc-in"></canvas><figcaption>Your photo</figcaption></figure>
+      <figure><canvas id="insc-out"></canvas><figcaption>Enhanced, with letter-like shapes boxed</figcaption></figure>
+    </div>
+    <div id="insc-result" class="card" hidden></div>
+    <details class="card">
+      <summary>Compare by eye: reference letters by script</summary>
+      <div id="insc-reference" class="reference"></div>
+    </details>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <p>Built by <a href="https://bhuvannv13.github.io/">Bhuvann Vinodh Ram</a> · <a href="https://github.com/bhuvannv13/tamil-thedal">Source code</a> (MIT). Thirukkural text and G. U. Pope's 1886 translations are in the public domain, via <a href="https://github.com/tk120404/thirukkural">tk120404/thirukkural</a> (Apache-2.0). Aathichudi meanings and Puthiya Aathichudi text come from <a href="https://ta.wikisource.org/">Tamil Wikisource</a> (CC BY-SA 4.0). Theme tags are this site's own; tags on Avvaiyar and Bharathiyar lines are assigned automatically from keywords.</p>
+</footer>
+
+<script src="chat.js"></script>
+<script src="content.js"></script>
+<script src="app.js"></script>
+<script src="inscription.js"></script>
+</body>
+</html>
