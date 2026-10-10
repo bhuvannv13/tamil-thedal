@@ -3,7 +3,7 @@
 (function () {
   "use strict";
   // Served from this site first (copied in by the build workflow), with the official build as a fallback.
-  const OPENCV_URLS = ["vendor/opencv.js", "https://docs.opencv.org/4.10.0/opencv.js"];
+  const OPENCV_URLS = ["vendor/opencv.js", "https://cdn.jsdelivr.net/npm/@techstark/opencv-js/dist/opencv.js", "https://docs.opencv.org/4.10.0/opencv.js"];
   const TESSERACT_URL = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
   const cp = n => String.fromCodePoint(n);
   const SCRIPTS = [
